@@ -63,15 +63,20 @@ tag、不上传资产，因此候选不能表述为已发布版本。
 - [x] 版本声明统一更新为 `0.1.0-preview.14`。
 - [x] 更新 DSH、Market、全部有新版的内置插件和 GenUI Skill；Skills/MCP Manager 经盘点后保持当前最新可用版本。
 - [x] 为 GenUI 包名迁移增加桌面托管升级保护：仅替换仍由桌面托管的旧包，不重启已禁用 bundle，也不修改用户自装旧包。
-- [ ] 重新生成并校验本地 Windows x64 NSIS 安装包与 payload。
+- [x] 重新生成并校验本地 Windows x64 NSIS 安装包与 payload。
 - [ ] 隔离用户安装器冒烟：当前 Windows 用户已有桌面和开始菜单快捷方式，检查按隔离规则拒绝复用该用户；不删除现有用户快捷方式以绕过检查。
 - [ ] 发布门禁、GitHub Release、tag 与资产上传：本次明确不执行。
 
 此前仅更新版本号生成的本地 `preview.14` 安装器，以及随后仍内置 DSH `0.1.1-rc.2` 的安装器，均已作废。
 最终候选必须由 `0.1.2-alpha.2` 锁定源码重新生成，只保留在本地，不发布。
 
-本地打包结果：等待 DSH `0.1.2-alpha.2` 的运行时暂存、payload 校验和安装器重建完成后回填；不得复用
-旧安装器的 SHA-256、payload digest 或源码提交。
+本地打包结果：构建源码提交为 `3f22a5d7b720732ea77cf7881a382f0a65200cf0`，安装器为
+`src-tauri/target/release/bundle/nsis/DeepSeek Harness Desktop_0.1.0-preview.14_x64-setup.exe`（84,836,207
+字节，SHA-256：`b4b6bbd6aa1bf272f78bfd6b42ccb49b27f701773302f3cf4b3d95716e0504e4`）；payload digest 为
+`6d785176999d92da4af61730369c3fcf04f4cb0e77d8b8acc1313f3f310b2d54`，包含 10,697 个文件、248,373,589
+解包字节和 89,086,643 压缩字节，满足 300 MiB / 90 MiB 预算。完整构建耗时 1,121,433 ms，低于冷构建
+20 分钟门限。payload 压缩包已直接抽检 DSH `0.1.2-alpha.2`、Market `1.38.1`、GenUI `0.9.6`、Better
+Sidebar `0.17.1`、Skin Center `0.3.10`、Hindsight `0.4.3` 和 Skills/MCP Manager `0.2.4`。
 
 ## 2026-W34 版本计划
 
