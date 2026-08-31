@@ -45,7 +45,7 @@ tag、不上传资产，因此候选不能表述为已发布版本。
 | 组件 | 当前版本 | 线上最新 | 本周目标 | 处理 |
 |---|---:|---:|---:|---|
 | DSH Desktop | `0.1.0-preview.13` | 不适用 | `0.1.0-preview.14` | 更新 package、Cargo、Tauri 配置、桌面托管组件及其包锁的版本声明 |
-| [`@deepseek-ai/dsh`](https://www.npmjs.com/package/@deepseek-ai/dsh) | `0.1.1-rc.2` | `0.1.1-rc.2` | `0.1.1-rc.2` | npm `latest` 与 `next` 均未变化；GitHub alpha 尚未作为 npm 稳定候选交付，不纳入桌面包 |
+| [`@deepseek-ai/dsh`](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.2-alpha.2) | `0.1.1-rc.2` | `0.1.2-alpha.2`（npm `alpha`） | `0.1.2-alpha.2` | 用户要求采用最新上游版本；npm 已发布对应 tarball，仍按 prerelease 管理并重新验证全部内置插件 |
 | [`dshmarket`](https://www.npmjs.com/package/dshmarket) | `1.17.1` | `1.38.1` | `1.38.1` | 更新运行时锁和包锁，重新验证私有 pnpm 与 profile 事务 |
 | [`@changfenhuang/dsh-genui`](https://github.com/omdsh-dev/dsh-genui/releases/tag/v0.9.6) | `@omdsh-dev/dsh-genui` `0.8.6` | `0.9.6` | `0.9.6` | 上游更换包名；迁移桌面托管的旧依赖，保留用户自装旧包，交付 ECharts 资产与更新后的 Skill |
 | [`dsh-better-sidebar`](https://www.npmjs.com/package/dsh-better-sidebar) | `0.15.0` | `0.17.1` | `0.17.1` | 更新客户端 Mermaid 动态入口的 delivery 清单 |
@@ -53,24 +53,25 @@ tag、不上传资产，因此候选不能表述为已发布版本。
 | [`@vectorize-io/hindsight-coding-agents`](https://www.npmjs.com/package/@vectorize-io/hindsight-coding-agents) | `0.4.1` | `0.4.3` | `0.4.3` | 保持项目显式 opt-in，验证 Windows 子进程行为 |
 | [`@cubee-slide/skills-mcp-manager`](https://www.npmjs.com/package/@cubee-slide/skills-mcp-manager) | `0.2.4` | `0.2.4` | `0.2.4` | 上游无新 npm 版本，保持锁定输入 |
 
+补充说明：DSH `0.1.2-alpha.2` 已发布到 npm `alpha` dist-tag，`latest` / `next` 仍为
+`0.1.1-rc.2`。Skin Center `0.3.10` 明确要求 DSH `>=0.1.2-alpha.1`；其余插件的旧 peer range 按 npm
+默认 prerelease 语义不覆盖 alpha.2，因此安装继续使用仓库既有的 `--legacy-peer-deps`，并以 staging、payload
+和本机运行验证作为兼容结论，不能仅凭依赖安装成功放行。
+
 ### 本次结果
 
 - [x] 版本声明统一更新为 `0.1.0-preview.14`。
-- [x] 更新 Market、全部有新版的内置插件和 GenUI Skill；DSH 与 Skills/MCP Manager 经盘点后保持当前最新可用版本。
+- [x] 更新 DSH、Market、全部有新版的内置插件和 GenUI Skill；Skills/MCP Manager 经盘点后保持当前最新可用版本。
 - [x] 为 GenUI 包名迁移增加桌面托管升级保护：仅替换仍由桌面托管的旧包，不重启已禁用 bundle，也不修改用户自装旧包。
-- [x] 重新生成并校验本地 Windows x64 NSIS 安装包与 payload。
+- [ ] 重新生成并校验本地 Windows x64 NSIS 安装包与 payload。
 - [ ] 隔离用户安装器冒烟：当前 Windows 用户已有桌面和开始菜单快捷方式，检查按隔离规则拒绝复用该用户；不删除现有用户快捷方式以绕过检查。
 - [ ] 发布门禁、GitHub Release、tag 与资产上传：本次明确不执行。
 
-此前仅更新版本号生成的本地 `preview.14` 安装器不包含本周组件升级，已作废。新安装器同样只保留在本地，
-不发布。
+此前仅更新版本号生成的本地 `preview.14` 安装器，以及随后仍内置 DSH `0.1.1-rc.2` 的安装器，均已作废。
+最终候选必须由 `0.1.2-alpha.2` 锁定源码重新生成，只保留在本地，不发布。
 
-本地打包结果：构建源码提交为 `1894f2a5532384ce5a7190ab389200a1cd88ed6d`，安装器为
-`src-tauri/target/release/bundle/nsis/DeepSeek Harness Desktop_0.1.0-preview.14_x64-setup.exe`（83,290,582
-字节，SHA-256：`59349c03a770c7eb7522fcc4ce39dce201cc36a8896f292e7941381ce90e4387`）；payload digest 为
-`6cc65a0c42d37e204dff218c490ddf2555bbc92ce932359d573239981ba951c3`，包含 11,238 个文件和 240,564,438
-解包字节，满足 300 MiB / 90 MiB 预算。payload 压缩包已直接抽检 Market `1.38.1`、GenUI `0.9.6`、Better
-Sidebar `0.17.1`、Skin Center `0.3.10` 和 Hindsight `0.4.3`。
+本地打包结果：等待 DSH `0.1.2-alpha.2` 的运行时暂存、payload 校验和安装器重建完成后回填；不得复用
+旧安装器的 SHA-256、payload digest 或源码提交。
 
 ## 2026-W34 版本计划
 

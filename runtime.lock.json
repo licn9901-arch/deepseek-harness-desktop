@@ -9,8 +9,8 @@
   },
   "dsh": {
     "package": "@deepseek-ai/dsh",
-    "version": "0.1.1-rc.2",
-    "integrity": "sha512-UP1UIh6q3Gme/yXRn/QL2P8IsVlv8Shpg22TRJIZPsCRWLm4CBiA1MUvXmJAfsOEETBMLAl+xWPtFw6ICsN3wg==",
+    "version": "0.1.2-alpha.2",
+    "integrity": "sha512-4TvTC5kRKlgtSU2UTBv+cID9a2Z+6+m6mpvjXWJfVzuTkflCff6s4MsQpFJTCmwFh/k7zNWe7qFXcLYMV/5VvA==",
     "nodeRange": ">=22.13 <23",
     "cliEntry": "node_modules/@deepseek-ai/dsh/lib/bin.js"
   },

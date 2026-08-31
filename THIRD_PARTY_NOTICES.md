@@ -7,13 +7,13 @@ The preview installer bundles the following third-party software:
 | Component | Pinned version | License / source |
 |---|---:|---|
 | Node.js | 22.22.3 | Node.js license, <https://github.com/nodejs/node> |
-| `@deepseek-ai/dsh` | 0.1.1-rc.2 | MIT, <https://www.npmjs.com/package/@deepseek-ai/dsh> |
-| `dshmarket` | 1.17.1 | MIT, <https://github.com/dsh-market/dsh-market> |
+| `@deepseek-ai/dsh` | 0.1.2-alpha.2 | MIT, <https://www.npmjs.com/package/@deepseek-ai/dsh> |
+| `dshmarket` | 1.38.1 | MIT, <https://github.com/dsh-market/dsh-market> |
 | `pnpm` | 10.34.5 | MIT, <https://github.com/pnpm/pnpm> |
-| `@omdsh-dev/dsh-genui` | 0.8.6 | MIT, <https://github.com/omdsh-dev/dsh-genui> |
-| `dsh-better-sidebar` | 0.15.0 | MIT, <https://github.com/omdsh-dev/DSH-better-sidebar> |
-| `@linxin666/dsh-client-ui-skin-center` | 0.2.7 | Apache-2.0, <https://github.com/zhu1090093659/dsh-web-ui> |
-| `@vectorize-io/hindsight-coding-agents` | 0.4.1 | MIT, <https://github.com/vectorize-io/hindsight/tree/main/hindsight-integrations/coding-agents> |
+| `@changfenhuang/dsh-genui` | 0.9.6 | MIT, <https://github.com/omdsh-dev/dsh-genui> |
+| `dsh-better-sidebar` | 0.17.1 | MIT, <https://github.com/omdsh-dev/DSH-better-sidebar> |
+| `@linxin666/dsh-client-ui-skin-center` | 0.3.10 | Apache-2.0, <https://github.com/zhu1090093659/dsh-web-ui> |
+| `@vectorize-io/hindsight-coding-agents` | 0.4.3 | MIT, <https://github.com/vectorize-io/hindsight/tree/main/hindsight-integrations/coding-agents> |
 | `@cubee-slide/skills-mcp-manager` | 0.2.4 | MIT, <https://github.com/licn9901-arch/dsh-skills-mcp-manager> |
 | Tauri | 2.x | Apache-2.0 OR MIT, <https://github.com/tauri-apps/tauri> |
 | esbuild | 0.28.2 | MIT, <https://github.com/evanw/esbuild> |

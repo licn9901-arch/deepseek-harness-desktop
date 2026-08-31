@@ -1,8 +1,8 @@
 # 桌面运行时与安装包优化设计
 
 本文是 DeepSeek Harness Desktop 的运行时交付、升级回滚和打包性能契约。实现基线固定为
-`@deepseek-ai/dsh@0.1.1-rc.2`（npm integrity 见 `runtime.lock.json`）、Node.js `22.22.3`、
-`dshmarket@1.17.1`、`pnpm@10.34.5` 和 Windows x64。上游概念说明固定参考 rc.8 发布 commit
+`@deepseek-ai/dsh@0.1.2-alpha.2`（npm integrity 见 `runtime.lock.json`）、Node.js `22.22.3`、
+`dshmarket@1.38.1`、`pnpm@10.34.5` 和 Windows x64。上游概念说明固定参考 rc.8 发布 commit
 [`15148dbd` 的 DSH 官方基础文档](https://github.com/deepseek-ai/deepseek-harness/blob/15148dbd9a1d1f1ef1a26e5749b32af0cd663935/docs/user/develop/basic/index.md)，
 行为判定以锁定 npm 包的实际入口、配置和 loader smoke 为准，不跟随主分支文档漂移。
 
@@ -90,7 +90,7 @@ preview.8 最终同机安装版 20 对 warm 启动中，legacy P50/P95 为 4,902
 
 ### 锁文件
 
-`runtime.lock.json` schema 2 只允许 Node `22.22.3`、DSH `0.1.1-rc.2`、Market `1.17.1`
+`runtime.lock.json` schema 2 只允许 Node `22.22.3`、DSH `0.1.2-alpha.2`、Market `1.38.1`
 和 pnpm `10.34.5`。构建不得探测或调用全局 pnpm，也不得下载另一个 major。
 
 原 `pnpm@10.33.2` pin 因 high advisories 被废止。批准的 `10.34.5` 使用 registry integrity

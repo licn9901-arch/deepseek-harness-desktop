@@ -4,7 +4,8 @@
 
 ## 本版内容
 
-- DSH 内核保持 npm 当前 `latest` / `next` 的 `0.1.1-rc.2`；不采用尚未作为 npm 候选交付的 GitHub alpha。
+- DSH 内核升级至 npm `alpha` 渠道的 `0.1.2-alpha.2`；该版本仍是上游 prerelease，不表述为稳定版。
+- 新内核增加连接失败自动重试/立即重连、会话标题中的活动计划，并改善插件分组、长会话性能与 token/耗时明细。
 - DSH Market 升级至 `1.38.1`；Better Sidebar、Skin Center、Hindsight 分别升级至 `0.17.1`、`0.3.10`、`0.4.3`。
 - GenUI 升级至 `0.9.6`，包名由 `@omdsh-dev/dsh-genui` 变更为 `@changfenhuang/dsh-genui`，新增 ECharts 交付资产；桌面托管的旧包会安全迁移，用户自装旧包保持原状。
 - Skills/MCP Manager 仍为最新可用的 `0.2.4`；GenUI 托管 Skill 随插件更新至 `0.9.6`。
@@ -17,7 +18,7 @@
 
 ## 数据兼容提醒
 
-- DSH `rc.8` 起调整了 SQLite 存储结构，`0.1.1-rc.2` 写入的数据不能假定可由旧内核读取。
+- DSH `rc.8` 起调整了 SQLite 存储结构，`0.1.2-alpha.2` 写入的数据不能假定可由旧内核读取。
 - 手动安装旧桌面版只会回退应用与 payload，不等于完成数据回滚。
 - 若要发布，仍须使用隔离的数据副本完成 `preview.13` 到 `preview.14` 的会话读取、新建、分叉、继续对话和候选失败回退验证。
 
