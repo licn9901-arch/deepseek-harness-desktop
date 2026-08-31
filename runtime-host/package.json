@@ -1,6 +1,6 @@
 {
   "name": "dsh-desktop-runtime",
-  "version": "0.1.0-preview.13",
+  "version": "0.1.0-preview.14",
   "private": true,
   "description": "Pinned runtime payload for DeepSeek Harness Desktop",
   "license": "MIT",

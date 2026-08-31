@@ -1,6 +1,6 @@
 {
   "name": "@dsh-desktop/settings",
-  "version": "0.1.0-preview.13",
+  "version": "0.1.0-preview.14",
   "description": "Optional desktop settings for managed plugins and Hindsight project memory",
   "license": "MIT",
   "type": "module",
