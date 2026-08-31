@@ -24,7 +24,7 @@ async function fixture() {
   const profile = {
     dependencies: {
       "dsh-at-file": "link:C:/managed/dsh-at-file",
-      "@omdsh-dev/dsh-genui": "link:C:/managed/dsh-genui",
+      "@changfenhuang/dsh-genui": "link:C:/managed/dsh-genui",
       "dsh-better-sidebar": "link:C:/managed/dsh-better-sidebar",
       "user-plugin": "1.2.3",
     },
@@ -36,7 +36,7 @@ async function fixture() {
           "dshmarket",
           "@dsh-desktop/settings",
           "dsh-at-file",
-          "@omdsh-dev/dsh-genui",
+          "@changfenhuang/dsh-genui",
           "user-plugin",
         ],
       },
@@ -73,7 +73,7 @@ test("只接受 web profile 白名单，并保护基础 bundle", () => {
     /unknown-managed-plugin/,
   );
   assert.throws(
-    () => assertToggleBody({ profile: "other", package: "@omdsh-dev/dsh-genui", enabled: false }),
+    () => assertToggleBody({ profile: "other", package: "@changfenhuang/dsh-genui", enabled: false }),
     /invalid-request/,
   );
   assert.throws(
@@ -134,17 +134,17 @@ test("API 只接受回环 Host 与同源浏览器请求", () => {
 test("开关只修改 bundles，并保留历史 At File 依赖与未知用户 bundle", async () => {
   const { path, profile } = await fixture();
   await toggleManagedPlugin(
-    { profile: "web", package: "@omdsh-dev/dsh-genui", enabled: false },
+    { profile: "web", package: "@changfenhuang/dsh-genui", enabled: false },
     path,
   );
   const updated = JSON.parse(await readFile(path, "utf8"));
   assert.deepEqual(updated.dependencies, profile.dependencies);
   assert(updated.dsh.profile.bundles.includes("user-plugin"));
   assert(updated.dsh.profile.bundles.includes("dsh-at-file"));
-  assert(!updated.dsh.profile.bundles.includes("@omdsh-dev/dsh-genui"));
+  assert(!updated.dsh.profile.bundles.includes("@changfenhuang/dsh-genui"));
 
   await toggleManagedPlugin(
-    { profile: "web", package: "@omdsh-dev/dsh-genui", enabled: false },
+    { profile: "web", package: "@changfenhuang/dsh-genui", enabled: false },
     path,
   );
   const repeated = JSON.parse(await readFile(path, "utf8"));
@@ -179,7 +179,7 @@ test("并发开关串行合并，列表返回最终状态", async () => {
       path,
     ),
     toggleManagedPlugin(
-      { profile: "web", package: "@omdsh-dev/dsh-genui", enabled: false },
+      { profile: "web", package: "@changfenhuang/dsh-genui", enabled: false },
       path,
     ),
   ]);
@@ -187,7 +187,7 @@ test("并发开关串行合并，列表返回最终状态", async () => {
   assert.equal(rows.some((row) => row.package === "dsh-at-file"), false);
   assert.equal(rows.some((row) => row.package === "@liustack/modlens"), false);
   assert.equal(rows.find((row) => row.package === "dsh-better-sidebar").enabled, false);
-  assert.equal(rows.find((row) => row.package === "@omdsh-dev/dsh-genui").enabled, false);
+  assert.equal(rows.find((row) => row.package === "@changfenhuang/dsh-genui").enabled, false);
 });
 
 test("Hindsight 保存只修改托管字段并强制项目显式启用", async () => {

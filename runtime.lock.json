@@ -16,8 +16,8 @@
   },
   "market": {
     "package": "dshmarket",
-    "version": "1.17.1",
-    "integrity": "sha512-DQRK0dg0duXhDOqw6LWy5m6GkG3oLiTXC9pM6W9mi1gCbqM1ofgSPuyPOGCsE+06qHsiF65j/urpvCyvhhCPNw==",
+    "version": "1.38.1",
+    "integrity": "sha512-Z9VleLtCXwk5OlbSJKayWtbMaKACL8JUMyb/JHpErS4N3q//GJS+cgOhhxNkZYmXxB8/lv9IbhX1CBzlMhJeJg==",
     "nodeRange": ">=22.13 <23",
     "bundlePatch": "node_modules/dshmarket/cordis.patch.yml"
   },

@@ -39,26 +39,30 @@ Skill 的版本同步方式。本文是版本选型与发布记录的事实来�
 ## 2026-W35 版本计划
 
 盘点日期：2026-08-31。当前已发布基线为 `v0.1.0-preview.13`，本周本地候选版本为
-`v0.1.0-preview.14`。本次仅进行版本号同步和本地打包，沿用 W34 已锁定的运行时、插件与 Skill 输入；
-不创建 Release、不推送 tag、不上传资产，因此不能将候选表述为已发布版本。
+`v0.1.0-preview.14`。本周重新盘点 DSH、Market、全部内置插件及托管 Skill；不创建 Release、不推送
+tag、不上传资产，因此候选不能表述为已发布版本。
 
-| 组件 | 当前版本 | 本周目标 | 处理 |
-|---|---:|---:|---|
-| DSH Desktop | `0.1.0-preview.13` | `0.1.0-preview.14` | 更新 package、Cargo、Tauri 配置、桌面托管组件及其包锁的版本声明 |
-| DSH | `0.1.1-rc.2` | `0.1.1-rc.2` | 保持 W34 已锁定版本，本次不变更上游输入 |
-| DSH Market | `1.17.1` | `1.17.1` | 保持 W34 已锁定版本 |
-| 内置插件 / Skill | 7 / 1 | 7 / 1 | 保持 W34 已锁定的版本、来源和完整性摘要 |
+| 组件 | 当前版本 | 线上最新 | 本周目标 | 处理 |
+|---|---:|---:|---:|---|
+| DSH Desktop | `0.1.0-preview.13` | 不适用 | `0.1.0-preview.14` | 更新 package、Cargo、Tauri 配置、桌面托管组件及其包锁的版本声明 |
+| [`@deepseek-ai/dsh`](https://www.npmjs.com/package/@deepseek-ai/dsh) | `0.1.1-rc.2` | `0.1.1-rc.2` | `0.1.1-rc.2` | npm `latest` 与 `next` 均未变化；GitHub alpha 尚未作为 npm 稳定候选交付，不纳入桌面包 |
+| [`dshmarket`](https://www.npmjs.com/package/dshmarket) | `1.17.1` | `1.38.1` | `1.38.1` | 更新运行时锁和包锁，重新验证私有 pnpm 与 profile 事务 |
+| [`@changfenhuang/dsh-genui`](https://github.com/omdsh-dev/dsh-genui/releases/tag/v0.9.6) | `@omdsh-dev/dsh-genui` `0.8.6` | `0.9.6` | `0.9.6` | 上游更换包名；迁移桌面托管的旧依赖，保留用户自装旧包，交付 ECharts 资产与更新后的 Skill |
+| [`dsh-better-sidebar`](https://www.npmjs.com/package/dsh-better-sidebar) | `0.15.0` | `0.17.1` | `0.17.1` | 更新客户端 Mermaid 动态入口的 delivery 清单 |
+| [`@linxin666/dsh-client-ui-skin-center`](https://www.npmjs.com/package/@linxin666/dsh-client-ui-skin-center) | `0.2.7` | `0.3.10` | `0.3.10` | 验证 Skin 格式 v2 迁移、切换和本机媒体背景 |
+| [`@vectorize-io/hindsight-coding-agents`](https://www.npmjs.com/package/@vectorize-io/hindsight-coding-agents) | `0.4.1` | `0.4.3` | `0.4.3` | 保持项目显式 opt-in，验证 Windows 子进程行为 |
+| [`@cubee-slide/skills-mcp-manager`](https://www.npmjs.com/package/@cubee-slide/skills-mcp-manager) | `0.2.4` | `0.2.4` | `0.2.4` | 上游无新 npm 版本，保持锁定输入 |
 
 ### 本次结果
 
 - [x] 版本声明统一更新为 `0.1.0-preview.14`。
-- [x] 生成并校验本地 Windows x64 NSIS 安装包。
+- [x] 更新 Market、全部有新版的内置插件和 GenUI Skill；DSH 与 Skills/MCP Manager 经盘点后保持当前最新可用版本。
+- [x] 为 GenUI 包名迁移增加桌面托管升级保护：仅替换仍由桌面托管的旧包，不重启已禁用 bundle，也不修改用户自装旧包。
+- [ ] 重新生成并校验本地 Windows x64 NSIS 安装包。
 - [ ] 发布门禁、GitHub Release、tag 与资产上传：本次明确不执行。
 
-本地打包结果：构建源码提交为 `d22aa8084ac2390c069b6f009eeaa1474030c4ba`，安装器为
-`src-tauri/target/release/bundle/nsis/DeepSeek Harness Desktop_0.1.0-preview.14_x64-setup.exe`（91,708,602
-字节，SHA-256：`a504e4f820d8bd7839d291846afc5a70355cd0eaf650f4e045180c49586c2d8b`）；payload digest 为
-`3b927b5249f946cdf435d2e75a476fd88a54c3a932bd0b93647f1ea9354dc334`。该安装器仅保留在本地，未发布。
+此前仅更新版本号生成的本地 `preview.14` 安装器不包含本周组件升级，已作废；本节将在重新打包后记录新的
+构建提交、安装器 SHA-256 与 payload digest。新安装器同样只保留在本地，不发布。
 
 ## 2026-W34 版本计划
 

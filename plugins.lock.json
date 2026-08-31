@@ -36,24 +36,25 @@
       ]
     },
     {
-      "package": "@omdsh-dev/dsh-genui",
-      "version": "0.8.6",
-      "bundleId": "@omdsh-dev/dsh-genui",
+      "package": "@changfenhuang/dsh-genui",
+      "version": "0.9.6",
+      "bundleId": "@changfenhuang/dsh-genui",
       "license": "MIT",
       "source": {
         "type": "github-tarball",
         "repository": "omdsh-dev/dsh-genui",
-        "tag": "v0.8.6",
-        "commit": "2187fa48dfb05126850d3a1516be910718afdc79",
-        "url": "https://api.github.com/repos/omdsh-dev/dsh-genui/tarball/v0.8.6",
-        "sha256": "6ef84b7237910254a287070e9505d5ed8340edce8f7ca3be5afa25e25a221b98",
-        "archive": "dsh-genui-v0.8.6.tar.gz"
+        "tag": "v0.9.6",
+        "commit": "d8e82c59cfb5b966dedf2a30911a0fa2c0844182",
+        "url": "https://api.github.com/repos/omdsh-dev/dsh-genui/tarball/v0.9.6",
+        "sha256": "331de8d131d34efbe452845d18315ccd72385531af2e16078f4a0d31f4cd24e6",
+        "archive": "dsh-genui-v0.9.6.tar.gz"
       },
       "requiredFiles": [
         "lib/index.js",
         "lib/client.js",
         "lib/assets/mermaid.js",
         "lib/assets/three.js",
+        "lib/assets/echarts.js",
         "cordis.patch.yml",
         "SKILL.md",
         "LICENSE"
@@ -61,7 +62,7 @@
       "delivery": {
         "serverEntries": ["lib/index.js"],
         "clientEntries": ["lib/client.js"],
-        "assets": ["lib/assets/mermaid.js", "lib/assets/three.js", "cordis.patch.yml", "SKILL.md"],
+        "assets": ["lib/assets/mermaid.js", "lib/assets/three.js", "lib/assets/echarts.js", "cordis.patch.yml", "SKILL.md"],
         "runtimeExternals": [],
         "nativeExternals": [],
         "licenseFiles": ["LICENSE"]
@@ -73,13 +74,13 @@
     },
     {
       "package": "dsh-better-sidebar",
-      "version": "0.15.0",
+      "version": "0.17.1",
       "bundleId": "dsh-better-sidebar",
       "license": "MIT",
       "source": {
         "type": "npm",
         "registry": "https://registry.npmjs.org/",
-        "integrity": "sha512-9Ox7wvwhBRlgMIxVRKqar26eRp1GnAAOO5a0QrxydpUbuJdBIpUFOHGcAI+xX6ddJGwAdELFdMsyMWAtJEhAUQ=="
+        "integrity": "sha512-7me2X6w+ecbzAMEHtuWkSPUrfLDLTBvL9qugzgBbg1FyWyy2dzS9QNDvnZjjkst4kr4LjUJTTG4rsXBcz41YzQ=="
       },
       "requiredFiles": [
         "lib/index.js",
@@ -89,7 +90,7 @@
       ],
       "delivery": {
         "serverEntries": ["lib/index.js"],
-        "clientEntries": ["lib/client.js", "lib/client-editor.js", "lib/client-registry.js", "lib/client-terminal.js"],
+        "clientEntries": ["lib/client.js", "lib/client-editor.js", "lib/client-registry.js", "lib/client-terminal.js", "lib/client-mermaid.js"],
         "assets": ["lib/invariant.js", "cordis.patch.yml"],
         "runtimeExternals": ["schemastery", "ws"],
         "nativeExternals": ["node-pty"],
@@ -132,13 +133,13 @@
     },
     {
       "package": "@linxin666/dsh-client-ui-skin-center",
-      "version": "0.2.7",
+      "version": "0.3.10",
       "bundleId": "ui-skin-center",
       "license": "Apache-2.0",
       "source": {
         "type": "npm",
         "registry": "https://registry.npmjs.org/",
-        "integrity": "sha512-QyY1s3gdlXagC5mYHTgiBUj2J0u6z1wjaPn/TQXB6y+2+TBhrMPFHmZpmwq2RE8dy0cc4E2MlHX10IwX8lPWfw=="
+        "integrity": "sha512-9SjMsKTBqgszc5W8h+amNl3M6mzqZhckJlLfXZNLUgYpLMdOQRbmxb9yy42jofiIoaTEYxCn4m4ArnlSiUrxWA=="
       },
       "requiredFiles": [
         "lib/index.js",
@@ -164,13 +165,13 @@
     },
     {
       "package": "@vectorize-io/hindsight-coding-agents",
-      "version": "0.4.1",
+      "version": "0.4.3",
       "bundleId": "hindsight-coding-agents",
       "license": "MIT",
       "source": {
         "type": "npm",
         "registry": "https://registry.npmjs.org/",
-        "integrity": "sha512-kJxvHFOWalfDg7xtAuPGMRJ/v8pTGulA+8g54H/nXOjcXnqdOy/qE2EupAJaN5VCWf152Ps/X/LjXc4UVG0tSw=="
+        "integrity": "sha512-Vdw2tiv17lB5SW7qNmT6PKJHC7eDTBBcW8QBBJH7QpiIsEFgPkCg5TvR+Gt1clgYmViKqpWxzR8OJh9l6YVkRQ=="
       },
       "requiredFiles": [
         "dist/dsh.js",
@@ -224,10 +225,10 @@
   "skills": [
     {
       "name": "genui",
-      "sourcePackage": "@omdsh-dev/dsh-genui",
+      "sourcePackage": "@changfenhuang/dsh-genui",
       "sourceFile": "SKILL.md",
-      "version": "0.8.6",
-      "sha256": "052681f96898450e25c8080a532f48d2e57ce72d5bbdcbe05d23ca22b79beb2f"
+      "version": "0.9.6",
+      "sha256": "9a8a6250e527e4bca3f98c32d7e7156f6df344fee641a79bd94291771085368f"
     }
   ]
 }

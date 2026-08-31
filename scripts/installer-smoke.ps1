@@ -50,8 +50,9 @@ $payloadResources = @(
     (Join-Path $installRoot 'builtin-plugins.zip')
 )
 $bundledPlugins = @(
-    (Join-Path $installRoot 'plugins\node_modules\@omdsh-dev\dsh-genui\lib\assets\mermaid.js'),
-    (Join-Path $installRoot 'plugins\node_modules\@omdsh-dev\dsh-genui\SKILL.md'),
+    (Join-Path $installRoot 'plugins\node_modules\@changfenhuang\dsh-genui\lib\assets\mermaid.js'),
+    (Join-Path $installRoot 'plugins\node_modules\@changfenhuang\dsh-genui\lib\assets\echarts.js'),
+    (Join-Path $installRoot 'plugins\node_modules\@changfenhuang\dsh-genui\SKILL.md'),
     (Join-Path $installRoot 'plugins\node_modules\dsh-better-sidebar\lib\index.js'),
     (Join-Path $installRoot 'plugins\node_modules\@dsh-desktop\settings\lib\index.js'),
     (Join-Path $installRoot 'plugins\node_modules\@dsh-desktop\settings\lib\client.js'),

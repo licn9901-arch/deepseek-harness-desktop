@@ -5,9 +5,9 @@
   "description": "Locked production dependencies for DSH Desktop managed plugins",
   "dependencies": {
     "@cubee-slide/skills-mcp-manager": "0.2.4",
-    "@linxin666/dsh-client-ui-skin-center": "0.2.7",
-    "@vectorize-io/hindsight-coding-agents": "0.4.1",
-    "dsh-better-sidebar": "0.15.0",
+    "@linxin666/dsh-client-ui-skin-center": "0.3.10",
+    "@vectorize-io/hindsight-coding-agents": "0.4.3",
+    "dsh-better-sidebar": "0.17.1",
     "zod": "4.4.3"
   }
 }

@@ -14,7 +14,7 @@ const PROTECTED_BUNDLES = new Set([
   "@dsh-desktop/runtime-services",
 ]);
 const MANAGED_PLUGINS = Object.freeze([
-  { package: "@omdsh-dev/dsh-genui", label: "GenUI" },
+  { package: "@changfenhuang/dsh-genui", label: "GenUI" },
   { package: "dsh-better-sidebar", label: "Better Sidebar" },
   { package: "@linxin666/dsh-client-ui-skin-center", label: "主题皮肤" },
   { package: "@vectorize-io/hindsight-coding-agents", label: "Hindsight 记忆" },

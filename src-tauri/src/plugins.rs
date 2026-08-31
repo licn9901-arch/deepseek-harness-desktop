@@ -22,6 +22,8 @@ const MARKET_BUNDLE: &str = "dshmarket";
 const MARKET_RUNTIME_ALIAS: &str = "dshmarket-desktop";
 const RUNTIME_SERVICES_BUNDLE: &str = "@dsh-desktop/runtime-services";
 const DESKTOP_SETTINGS_BUNDLE: &str = "@dsh-desktop/settings";
+const LEGACY_GENUI_BUNDLE: &str = "@omdsh-dev/dsh-genui";
+const GENUI_BUNDLE: &str = "@changfenhuang/dsh-genui";
 const LEGACY_DESKTOP_SETTINGS_BUNDLE: &str = "@dsh-desktop/theme-settings";
 const LEGACY_SKINS_BUNDLE: &str = "@linxin666/dsh-skins";
 const SKIN_CENTER_BUNDLE: &str = "@linxin666/dsh-client-ui-skin-center";
@@ -1511,6 +1513,7 @@ fn plan_profile(
         )
         .collect::<BTreeSet<_>>();
     let specially_migrated_packages = BTreeSet::from([
+        LEGACY_GENUI_BUNDLE,
         LEGACY_SKILLS_MCP_BUNDLE,
         LEGACY_DESKTOP_SETTINGS_BUNDLE,
         LEGACY_SKINS_BUNDLE,
@@ -1550,6 +1553,35 @@ fn plan_profile(
                 enabled
             })
         });
+
+    // GenUI 0.9 更换了发布 scope。仅当旧包仍由桌面 marker 指向时才迁移并继承启用状态；
+    // 用户替换来源或主动移除旧包时不覆盖其选择，也不并行加载两套 GenUI。
+    let legacy_genui_dependency = dependency_values
+        .get(LEGACY_GENUI_BUNDLE)
+        .and_then(Value::as_str)
+        .map(str::to_owned);
+    let legacy_genui_record = state.managed.get(LEGACY_GENUI_BUNDLE);
+    let legacy_genui_owned = legacy_genui_record
+        .zip(legacy_genui_dependency.as_deref())
+        .is_some_and(|(record, dependency)| dependency == link_spec(&record.link_target));
+    let legacy_genui_enabled = legacy_genui_owned.then(|| {
+        let enabled = current_bundles
+            .iter()
+            .any(|bundle| bundle == LEGACY_GENUI_BUNDLE);
+        dependency_values.remove(LEGACY_GENUI_BUNDLE);
+        current_bundles.retain(|bundle| bundle != LEGACY_GENUI_BUNDLE);
+        removed_packages.push(LEGACY_GENUI_BUNDLE.to_owned());
+        enabled
+    });
+    let suppress_new_genui = if legacy_genui_owned {
+        false
+    } else if legacy_genui_record.is_some() && legacy_genui_dependency.is_none() {
+        current_bundles.retain(|bundle| bundle != LEGACY_GENUI_BUNDLE);
+        removed_packages.push(LEGACY_GENUI_BUNDLE.to_owned());
+        true
+    } else {
+        legacy_genui_dependency.is_some()
+    };
 
     // 旧设置包存在且仍由桌面管理时原位迁移；已经被用户删除或接管时保持原状，
     // 避免升级重新安装用户明确卸载的可选设置界面。
@@ -1609,6 +1641,18 @@ fn plan_profile(
     for plugin in &lock.plugins {
         let target = store_node_modules.join(package_relative_path(&plugin.package)?);
         let target_text = normalized_path(&target);
+        if plugin.package == GENUI_BUNDLE && suppress_new_genui {
+            current_bundles.retain(|bundle| bundle != GENUI_BUNDLE);
+            next_state.managed.insert(
+                plugin.package.clone(),
+                ManagedPluginState {
+                    version: plugin.version.clone(),
+                    link_target: target_text,
+                    bundle_enabled: false,
+                },
+            );
+            continue;
+        }
         if plugin.package == DESKTOP_SETTINGS_BUNDLE && suppress_new_settings {
             current_bundles.retain(|bundle| bundle != DESKTOP_SETTINGS_BUNDLE);
             next_state.managed.insert(
@@ -1668,6 +1712,8 @@ fn plan_profile(
             legacy_skin_enabled.unwrap_or(true)
         } else if plugin.package == SKILLS_MCP_BUNDLE && legacy_skills_enabled.is_some() {
             legacy_skills_enabled.unwrap_or(true)
+        } else if plugin.package == GENUI_BUNDLE && legacy_genui_enabled.is_some() {
+            legacy_genui_enabled.unwrap_or(true)
         } else {
             previous
                 .map(|_| {
@@ -2066,7 +2112,7 @@ mod tests {
               "plugins": [
                 {"package":"@dsh-desktop/runtime-services","version":"0.1.0-preview.8","bundleId":"desktop-runtime-services","license":"MIT","source":{"type":"local","path":"desktop-plugins/runtime-services"},"requiredFiles":["lib/index.js"]},
                 {"package":"dsh-at-file","version":"0.6.0","bundleId":"dsh-at-file","license":"MIT","source":{"type":"npm","integrity":"sha512-iKOgZ1auSGj2TyIjsS2nDqYiHrGWHUg08CxcIzgnkRjDyCjb/qjpt6W3cMLAj4KxTD2643+E7dg3nikClO0Esg=="},"requiredFiles":["lib/index.js"]},
-                {"package":"@omdsh-dev/dsh-genui","version":"0.8.4","bundleId":"genui","license":"MIT","source":{"type":"npm","integrity":"sha512-iKOgZ1auSGj2TyIjsS2nDqYiHrGWHUg08CxcIzgnkRjDyCjb/qjpt6W3cMLAj4KxTD2643+E7dg3nikClO0Esg=="},"requiredFiles":["lib/index.js"]},
+                {"package":"@changfenhuang/dsh-genui","version":"0.9.6","bundleId":"genui","license":"MIT","source":{"type":"npm","integrity":"sha512-iKOgZ1auSGj2TyIjsS2nDqYiHrGWHUg08CxcIzgnkRjDyCjb/qjpt6W3cMLAj4KxTD2643+E7dg3nikClO0Esg=="},"requiredFiles":["lib/index.js"]},
                 {"package":"dsh-better-sidebar","version":"0.12.2","bundleId":"better-sidebar","license":"MIT","source":{"type":"npm","integrity":"sha512-iKOgZ1auSGj2TyIjsS2nDqYiHrGWHUg08CxcIzgnkRjDyCjb/qjpt6W3cMLAj4KxTD2643+E7dg3nikClO0Esg=="},"requiredFiles":["lib/index.js"]},
                 {"package":"@dsh-desktop/settings","version":"0.1.0","bundleId":"desktop-settings","license":"MIT","source":{"type":"local","path":"desktop-plugins/settings"},"requiredFiles":["lib/index.js","lib/client.js","cordis.patch.yml"]},
                 {"package":"@linxin666/dsh-client-ui-skin-center","version":"0.2.2","bundleId":"ui-skin-center","license":"Apache-2.0","source":{"type":"npm","integrity":"sha512-+yxMKY6ljKoJsvNYbKn6BxOXKFbXDFRTI4UKCMfiG13VwNpsqvpQC7GjL/mYbNn8joolEWlHgSdhuKAS+J4bGg=="},"requiredFiles":["lib/index.js","lib/client.js","cordis.patch.yml","skins"]},
@@ -2075,7 +2121,7 @@ mod tests {
                 {"package":"@cubee-slide/skills-mcp-manager","version":"0.2.4","bundleId":"skills-mcp-manager","license":"MIT","source":{"type":"npm","integrity":"sha512-N94gaY8ropqRNCKKO3Ff4IFIQu+EcbKC3Vrl9WFzlGxb1QnJq6H8TVMyVJaM/ir+6riuML2A2YxcBVsQeQbFAw=="},"requiredFiles":["lib/index.js"]}
               ],
               "transitivePackages": [],
-              "skills":[{"name":"genui","sourcePackage":"@omdsh-dev/dsh-genui","sourceFile":"SKILL.md","version":"0.8.4","sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}]
+              "skills":[{"name":"genui","sourcePackage":"@changfenhuang/dsh-genui","sourceFile":"SKILL.md","version":"0.9.6","sha256":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"}]
             }"#,
         )
         .unwrap()
@@ -2174,7 +2220,7 @@ mod tests {
                 RUNTIME_SERVICES_BUNDLE,
                 "dshmarket",
                 "dsh-at-file",
-                "@omdsh-dev/dsh-genui",
+                "@changfenhuang/dsh-genui",
                 "dsh-better-sidebar",
                 DESKTOP_SETTINGS_BUNDLE,
                 SKIN_CENTER_BUNDLE,
@@ -2194,9 +2240,9 @@ mod tests {
     fn genui_skill() -> ManagedSkill {
         ManagedSkill {
             name: "genui".to_owned(),
-            source_package: "@omdsh-dev/dsh-genui".to_owned(),
+            source_package: "@changfenhuang/dsh-genui".to_owned(),
             source_file: "SKILL.md".to_owned(),
-            version: "0.8.4".to_owned(),
+            version: "0.9.6".to_owned(),
             sha256: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".to_owned(),
         }
     }
@@ -2414,7 +2460,7 @@ mod tests {
                 RUNTIME_SERVICES_BUNDLE,
                 "dshmarket",
                 "dsh-at-file",
-                "@omdsh-dev/dsh-genui",
+                "@changfenhuang/dsh-genui",
                 "dsh-better-sidebar",
                 DESKTOP_SETTINGS_BUNDLE,
                 SKIN_CENTER_BUNDLE,
@@ -2483,6 +2529,66 @@ mod tests {
     }
 
     #[test]
+    fn owned_legacy_genui_is_replaced_without_reenabling_a_disabled_bundle() {
+        let store = Path::new(r"C:\managed\node_modules");
+        let legacy_package = "@omdsh-dev/dsh-genui";
+        let legacy_target = r"C:\old\node_modules\@omdsh-dev\dsh-genui";
+        let state = PluginInstallState {
+            schema_version: 2,
+            lock_digest: "old".to_owned(),
+            managed: BTreeMap::from([(
+                legacy_package.to_owned(),
+                ManagedPluginState {
+                    version: "0.8.6".to_owned(),
+                    link_target: legacy_target.to_owned(),
+                    bundle_enabled: false,
+                },
+            )]),
+            managed_skills: BTreeMap::new(),
+            sidebar_defaults_seeded: true,
+        };
+        let profile = json!({
+          "dependencies": {legacy_package: "link:C:/old/node_modules/@omdsh-dev/dsh-genui"},
+          "dsh": {"profile": {"bundles": [BASE_BUNDLE, WEB_APP_BUNDLE]}}
+        });
+
+        let plan = plan_profile(profile, &state, &lock(), store, "digest-genui-0.9.6").unwrap();
+
+        assert!(plan.profile["dependencies"].get(legacy_package).is_none());
+        assert!(plan.profile["dependencies"]
+            .get("@changfenhuang/dsh-genui")
+            .is_some());
+        assert!(!bundles(&plan.profile).contains(&legacy_package));
+        assert!(!bundles(&plan.profile).contains(&"@changfenhuang/dsh-genui"));
+        assert_eq!(plan.removed_packages, vec![legacy_package]);
+    }
+
+    #[test]
+    fn user_owned_legacy_genui_is_preserved_without_installing_the_new_bundle() {
+        let legacy_package = "@omdsh-dev/dsh-genui";
+        let profile = json!({
+          "dependencies": {legacy_package: "0.8.6"},
+          "dsh": {"profile": {"bundles": [BASE_BUNDLE, WEB_APP_BUNDLE, legacy_package]}}
+        });
+
+        let plan = plan_profile(
+            profile,
+            &PluginInstallState::default(),
+            &lock(),
+            Path::new(r"C:\managed\node_modules"),
+            "digest-genui-user-owned",
+        )
+        .unwrap();
+
+        assert_eq!(plan.profile["dependencies"][legacy_package], "0.8.6");
+        assert!(plan.profile["dependencies"]
+            .get("@changfenhuang/dsh-genui")
+            .is_none());
+        assert!(bundles(&plan.profile).contains(&legacy_package));
+        assert!(!bundles(&plan.profile).contains(&"@changfenhuang/dsh-genui"));
+    }
+
+    #[test]
     fn bundled_market_is_active_without_replacing_user_dependency() {
         let profile = json!({
           "dependencies": {"dshmarket": "1.4.0"},
@@ -2506,7 +2612,7 @@ mod tests {
                 RUNTIME_SERVICES_BUNDLE,
                 "dshmarket",
                 "dsh-at-file",
-                "@omdsh-dev/dsh-genui",
+                "@changfenhuang/dsh-genui",
                 "dsh-better-sidebar",
                 DESKTOP_SETTINGS_BUNDLE,
                 SKIN_CENTER_BUNDLE,

@@ -4,8 +4,10 @@
 
 ## 本版内容
 
-- 本地候选仅更新桌面版与桌面托管组件版本号至 `0.1.0-preview.14`；未变更 DSH、Market、内置插件或托管 Skill 的锁定输入。
-- DSH 内核保持 `0.1.1-rc.2`，Market 保持 `1.17.1`；GenUI、Better Sidebar、Skin Center、Hindsight 与 Skills/MCP Manager 均保持上一版已验证的锁定版本。
+- DSH 内核保持 npm 当前 `latest` / `next` 的 `0.1.1-rc.2`；不采用尚未作为 npm 候选交付的 GitHub alpha。
+- DSH Market 升级至 `1.38.1`；Better Sidebar、Skin Center、Hindsight 分别升级至 `0.17.1`、`0.3.10`、`0.4.3`。
+- GenUI 升级至 `0.9.6`，包名由 `@omdsh-dev/dsh-genui` 变更为 `@changfenhuang/dsh-genui`，新增 ECharts 交付资产；桌面托管的旧包会安全迁移，用户自装旧包保持原状。
+- Skills/MCP Manager 仍为最新可用的 `0.2.4`；GenUI 托管 Skill 随插件更新至 `0.9.6`。
 - 本候选只生成本地安装包，不创建 Release、不推送 tag，也不上传任何资产。
 
 ## 视觉能力边界
