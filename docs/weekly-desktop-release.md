@@ -58,11 +58,19 @@ tag、不上传资产，因此候选不能表述为已发布版本。
 - [x] 版本声明统一更新为 `0.1.0-preview.14`。
 - [x] 更新 Market、全部有新版的内置插件和 GenUI Skill；DSH 与 Skills/MCP Manager 经盘点后保持当前最新可用版本。
 - [x] 为 GenUI 包名迁移增加桌面托管升级保护：仅替换仍由桌面托管的旧包，不重启已禁用 bundle，也不修改用户自装旧包。
-- [ ] 重新生成并校验本地 Windows x64 NSIS 安装包。
+- [x] 重新生成并校验本地 Windows x64 NSIS 安装包与 payload。
+- [ ] 隔离用户安装器冒烟：当前 Windows 用户已有桌面和开始菜单快捷方式，检查按隔离规则拒绝复用该用户；不删除现有用户快捷方式以绕过检查。
 - [ ] 发布门禁、GitHub Release、tag 与资产上传：本次明确不执行。
 
-此前仅更新版本号生成的本地 `preview.14` 安装器不包含本周组件升级，已作废；本节将在重新打包后记录新的
-构建提交、安装器 SHA-256 与 payload digest。新安装器同样只保留在本地，不发布。
+此前仅更新版本号生成的本地 `preview.14` 安装器不包含本周组件升级，已作废。新安装器同样只保留在本地，
+不发布。
+
+本地打包结果：构建源码提交为 `1894f2a5532384ce5a7190ab389200a1cd88ed6d`，安装器为
+`src-tauri/target/release/bundle/nsis/DeepSeek Harness Desktop_0.1.0-preview.14_x64-setup.exe`（83,290,582
+字节，SHA-256：`59349c03a770c7eb7522fcc4ce39dce201cc36a8896f292e7941381ce90e4387`）；payload digest 为
+`6cc65a0c42d37e204dff218c490ddf2555bbc92ce932359d573239981ba951c3`，包含 11,238 个文件和 240,564,438
+解包字节，满足 300 MiB / 90 MiB 预算。payload 压缩包已直接抽检 Market `1.38.1`、GenUI `0.9.6`、Better
+Sidebar `0.17.1`、Skin Center `0.3.10` 和 Hindsight `0.4.3`。
 
 ## 2026-W34 版本计划
 
