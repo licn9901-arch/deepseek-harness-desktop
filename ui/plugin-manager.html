@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>插件管理与安全恢复</title>
+    <link rel="stylesheet" href="plugin-manager.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header>
+        <p class="eyebrow">DSH DESKTOP · LOCAL RECOVERY</p>
+        <h1>插件管理与安全恢复</h1>
+        <p class="subtitle">此页面由桌面壳直接提供，即使 DSH Host 无法启动也能使用。</p>
+      </header>
+
+      <section id="failure" class="failure" hidden aria-labelledby="failure-title">
+        <div>
+          <p class="section-label">最近一次启动失败</p>
+          <h2 id="failure-title">Host 没有正常启动</h2>
+          <pre id="failure-message"></pre>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="恢复操作">
+        <div>
+          <span id="status" role="status" aria-live="polite">正在读取插件…</span>
+          <span id="log-path" class="log-path"></span>
+        </div>
+        <button id="relaunch" class="primary" type="button" disabled>重启桌面并应用</button>
+      </section>
+
+      <section aria-labelledby="plugins-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-label">当前 Profile</p>
+            <h2 id="plugins-title">插件清单</h2>
+          </div>
+          <p>系统组件只读；内置插件可禁用；Market 安装插件还可卸载。</p>
+        </div>
+        <div id="plugins" class="plugin-list" aria-busy="true"></div>
+      </section>
+    </main>
+    <script type="module" src="plugin-manager.js"></script>
+  </body>
+</html>

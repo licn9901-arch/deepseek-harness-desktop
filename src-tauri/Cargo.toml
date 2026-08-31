@@ -1,7 +1,7 @@
 [package]
 name = "dsh-desktop"
 default-run = "dsh-desktop"
-version = "0.1.0-preview.14"
+version = "0.1.0-preview.15"
 description = "Tauri desktop shell for DeepSeek Harness"
 edition = "2021"
 
@@ -23,7 +23,7 @@ fs2 = "0.4.3"
 zip = { version = "8.6.0", default-features = false, features = ["deflate-flate2-zlib-rs"] }
 
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.61.2", features = ["Win32_Storage_FileSystem"] }
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Storage_FileSystem", "Win32_System_Threading"] }
 
 [profile.release]
 strip = true

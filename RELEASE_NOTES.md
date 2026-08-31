@@ -1,4 +1,4 @@
-# DeepSeek Harness Desktop v0.1.0-preview.14
+# DeepSeek Harness Desktop v0.1.0-preview.15
 
 这是 Windows x64 社区预览版。本项目不是 DeepSeek 官方产品，也不代表 DeepSeek 官方立场。
 
@@ -9,6 +9,9 @@
 - DSH Market 升级至 `1.38.1`；Better Sidebar、Skin Center、Hindsight 分别升级至 `0.17.1`、`0.3.10`、`0.4.3`。
 - GenUI 升级至 `0.9.6`，包名由 `@omdsh-dev/dsh-genui` 变更为 `@changfenhuang/dsh-genui`，新增 ECharts 交付资产；桌面托管的旧包会安全迁移，用户自装旧包保持原状。
 - Skills/MCP Manager 仍为最新可用的 `0.2.4`；GenUI 托管 Skill 随插件更新至 `0.9.6`。
+- 新增不依赖 DSH Host 的本地“插件管理 / 安全恢复”窗口；Host 启动失败时桌面进程不再退出，可直接禁用或卸载故障插件。
+- 壳层禁用记录会在每次 Host 启动前重新应用；DSH Core、Web App、Market 和 Runtime Services 始终只读且不可操作。
+- 用户插件卸载失败时保持禁用；插件变更后通过独立 helper 完整重启桌面应用。
 - 本候选只生成本地安装包，不创建 Release、不推送 tag，也不上传任何资产。
 
 ## 视觉能力边界
@@ -20,7 +23,7 @@
 
 - DSH `rc.8` 起调整了 SQLite 存储结构，`0.1.2-alpha.2` 写入的数据不能假定可由旧内核读取。
 - 手动安装旧桌面版只会回退应用与 payload，不等于完成数据回滚。
-- 若要发布，仍须使用隔离的数据副本完成 `preview.13` 到 `preview.14` 的会话读取、新建、分叉、继续对话和候选失败回退验证。
+- 若要发布，仍须使用隔离的数据副本完成 `preview.13` 到 `preview.15` 的会话读取、新建、分叉、继续对话和候选失败回退验证。
 
 ## 安装提示
 

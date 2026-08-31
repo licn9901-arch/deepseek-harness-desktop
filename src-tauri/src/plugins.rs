@@ -13,6 +13,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use sha2::{Digest, Sha256};
 
+use crate::plugin_recovery::{apply_disabled_overrides, read_override_state};
 use crate::runtime::RuntimePaths;
 
 const SUPPORTED_SCHEMA_VERSION: u32 = 2;
@@ -294,7 +295,12 @@ impl PluginManager {
         let state = read_json_or_default::<PluginInstallState>(&state_path)?;
         let profile_path = self.web_profile.join("package.json");
         let profile = read_profile(&profile_path)?;
-        if self.fast_path_matches(&profile, &state, &lock, &store_modules, &digest)? {
+        let recovery_state = read_override_state(&self.dsh_home)?;
+        let mut recovered_profile = profile.clone();
+        let recovery_changed = apply_disabled_overrides(&mut recovered_profile, &recovery_state)?;
+        if !recovery_changed
+            && self.fast_path_matches(&profile, &state, &lock, &store_modules, &digest)?
+        {
             return Ok(PluginTransaction {
                 should_seed_sidebar: false,
                 state_path,
@@ -309,7 +315,23 @@ impl PluginManager {
         if self.immutable_resources {
             validate_plugin_tree(&store_modules, &lock)?;
         }
-        let plan = plan_profile(profile.clone(), &state, &lock, &store_modules, &digest)?;
+        let mut plan = plan_profile(recovered_profile, &state, &lock, &store_modules, &digest)?;
+        apply_disabled_overrides(&mut plan.profile, &recovery_state)?;
+        let enabled_bundles = plan
+            .profile
+            .get("dsh")
+            .and_then(Value::as_object)
+            .and_then(|dsh| dsh.get("profile"))
+            .and_then(Value::as_object)
+            .and_then(|profile| profile.get("bundles"))
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .collect::<BTreeSet<_>>();
+        for (package, record) in &mut plan.next_state.managed {
+            record.bundle_enabled = enabled_bundles.contains(package.as_str());
+        }
         let profile_changed = plan.profile != profile;
         if profile_changed && profile_path.is_file() {
             persist_profile_backup(&self.dsh_home, &profile_path)?;

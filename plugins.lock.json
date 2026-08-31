@@ -10,7 +10,7 @@
   "plugins": [
     {
       "package": "@dsh-desktop/runtime-services",
-      "version": "0.1.0-preview.14",
+      "version": "0.1.0-preview.15",
       "bundleId": "desktop-runtime-services",
       "license": "MIT",
       "source": {
@@ -104,7 +104,7 @@
     },
     {
       "package": "@dsh-desktop/settings",
-      "version": "0.1.0-preview.14",
+      "version": "0.1.0-preview.15",
       "bundleId": "desktop-settings",
       "license": "MIT",
       "source": {

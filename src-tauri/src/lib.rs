@@ -7,6 +7,7 @@ pub mod lifecycle;
 pub mod logger;
 pub mod navigation;
 pub mod payload;
+pub mod plugin_recovery;
 pub mod plugins;
 pub mod readiness;
 pub mod runtime;
@@ -58,6 +59,12 @@ pub fn run() {
             },
         ))
         .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            plugin_recovery::recovery_plugin_list,
+            plugin_recovery::recovery_plugin_set_enabled,
+            plugin_recovery::recovery_plugin_uninstall,
+            plugin_recovery::recovery_relaunch
+        ])
         .setup(setup_application)
         .build(tauri::generate_context!())
         .expect("error while building the tauri application")
@@ -97,6 +104,9 @@ fn setup_application(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Err
     let navigation_origin = host_origin.clone();
     let new_window_origin = host_origin.clone();
     let resource_dir = app.path().resource_dir().unwrap_or_default();
+    app.manage(plugin_recovery::PluginRecoveryState::new(
+        resource_dir.clone(),
+    ));
     let runtime_started = Instant::now();
     let selection = RuntimePaths::resolve_startup(&resource_dir);
     log_boot_phase(
@@ -210,6 +220,8 @@ fn setup_application(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Err
         }
     };
     let mut runtime = selection.primary;
+    app.state::<plugin_recovery::PluginRecoveryState>()
+        .set_runtime(runtime.clone());
     #[cfg(windows)]
     let directory_picker_owner = window.hwnd().ok().map(|hwnd| hwnd.0 as usize);
     #[cfg(not(windows))]
@@ -270,6 +282,8 @@ fn setup_application(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Err
                     }
                 }
                 runtime = fallback;
+                app.state::<plugin_recovery::PluginRecoveryState>()
+                    .set_runtime(runtime.clone());
             }
         }
     }
@@ -1053,22 +1067,16 @@ fn log_boot_phase(boot_id: &str, attempt: &str, phase: &str, duration: Duration)
     ));
 }
 
-/// 记录启动错误、显示诊断提示并以失败状态退出应用。
+/// 记录启动错误并打开独立恢复页；桌面进程保持存活等待用户处理。
 fn fail(handle: &AppHandle, message: &str) {
     if let Some(controller) = handle.try_state::<HostController>() {
         controller.mark_failed();
     }
     log_error(message);
-    let log_path = log_file_path();
-    let _ = handle
-        .dialog()
-        .message(format!(
-            "DeepSeek Harness failed.\n\n{message}\n\nLog: {}",
-            log_path.display()
-        ))
-        .title("DeepSeek Harness Desktop")
-        .blocking_show();
-    handle.exit(1);
+    if let Some(supervisor) = handle.try_state::<HostSupervisor>() {
+        supervisor.shutdown_for_recovery();
+    }
+    plugin_recovery::show_failure_recovery(handle, message);
 }
 
 #[cfg(test)]

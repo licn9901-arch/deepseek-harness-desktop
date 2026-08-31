@@ -39,12 +39,12 @@ Skill 的版本同步方式。本文是版本选型与发布记录的事实来�
 ## 2026-W35 版本计划
 
 盘点日期：2026-08-31。当前已发布基线为 `v0.1.0-preview.13`，本周本地候选版本为
-`v0.1.0-preview.14`。本周重新盘点 DSH、Market、全部内置插件及托管 Skill；不创建 Release、不推送
+`v0.1.0-preview.15`。本周重新盘点 DSH、Market、全部内置插件及托管 Skill；不创建 Release、不推送
 tag、不上传资产，因此候选不能表述为已发布版本。
 
 | 组件 | 当前版本 | 线上最新 | 本周目标 | 处理 |
 |---|---:|---:|---:|---|
-| DSH Desktop | `0.1.0-preview.13` | 不适用 | `0.1.0-preview.14` | 更新 package、Cargo、Tauri 配置、桌面托管组件及其包锁的版本声明 |
+| DSH Desktop | `0.1.0-preview.13` | 不适用 | `0.1.0-preview.15` | 更新 package、Cargo、Tauri 配置、桌面托管组件及其包锁的版本声明；增加独立插件安全恢复页 |
 | [`@deepseek-ai/dsh`](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.2-alpha.2) | `0.1.1-rc.2` | `0.1.2-alpha.2`（npm `alpha`） | `0.1.2-alpha.2` | 用户要求采用最新上游版本；npm 已发布对应 tarball，仍按 prerelease 管理并重新验证全部内置插件 |
 | [`dshmarket`](https://www.npmjs.com/package/dshmarket) | `1.17.1` | `1.38.1` | `1.38.1` | 更新运行时锁和包锁，重新验证私有 pnpm 与 profile 事务 |
 | [`@changfenhuang/dsh-genui`](https://github.com/omdsh-dev/dsh-genui/releases/tag/v0.9.6) | `@omdsh-dev/dsh-genui` `0.8.6` | `0.9.6` | `0.9.6` | 上游更换包名；迁移桌面托管的旧依赖，保留用户自装旧包，交付 ECharts 资产与更新后的 Skill |
@@ -60,17 +60,18 @@ tag、不上传资产，因此候选不能表述为已发布版本。
 
 ### 本次结果
 
-- [x] 版本声明统一更新为 `0.1.0-preview.14`。
+- [x] 版本声明统一更新为 `0.1.0-preview.15`。
 - [x] 更新 DSH、Market、全部有新版的内置插件和 GenUI Skill；Skills/MCP Manager 经盘点后保持当前最新可用版本。
 - [x] 为 GenUI 包名迁移增加桌面托管升级保护：仅替换仍由桌面托管的旧包，不重启已禁用 bundle，也不修改用户自装旧包。
-- [x] 重新生成并校验本地 Windows x64 NSIS 安装包与 payload。
+- [x] 增加不依赖 Host 的插件管理与安全恢复窗口、持久禁用覆盖、用户插件卸载和完整桌面重启链路。
+- [ ] 重新生成本地 Windows x64 NSIS 安装包与 payload，交由用户体验验收。
 - [ ] 隔离用户安装器冒烟：当前 Windows 用户已有桌面和开始菜单快捷方式，检查按隔离规则拒绝复用该用户；不删除现有用户快捷方式以绕过检查。
 - [ ] 发布门禁、GitHub Release、tag 与资产上传：本次明确不执行。
 
-此前仅更新版本号生成的本地 `preview.14` 安装器，以及随后仍内置 DSH `0.1.1-rc.2` 的安装器，均已作废。
-最终候选必须由 `0.1.2-alpha.2` 锁定源码重新生成，只保留在本地，不发布。
+此前的本地 `preview.14` 安装器不包含壳层插件恢复能力，已作废。最终候选必须由
+`0.1.2-alpha.2` 锁定源码重新生成，只保留在本地，不发布。
 
-本地打包结果：构建源码提交为 `3f22a5d7b720732ea77cf7881a382f0a65200cf0`，安装器为
+上一版已作废的本地打包结果（仅用于追溯）：构建源码提交为 `3f22a5d7b720732ea77cf7881a382f0a65200cf0`，安装器为
 `src-tauri/target/release/bundle/nsis/DeepSeek Harness Desktop_0.1.0-preview.14_x64-setup.exe`（84,836,207
 字节，SHA-256：`b4b6bbd6aa1bf272f78bfd6b42ccb49b27f701773302f3cf4b3d95716e0504e4`）；payload digest 为
 `6d785176999d92da4af61730369c3fcf04f4cb0e77d8b8acc1313f3f310b2d54`，包含 10,697 个文件、248,373,589

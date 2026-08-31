@@ -33,6 +33,7 @@ function Invoke-BuildPhase {
 
 Push-Location $repoRoot
 try {
+    Invoke-BuildPhase -Name 'pluginManagerUi' -Command 'npm.cmd' -Arguments @('run', 'build:plugin-manager')
     Invoke-BuildPhase -Name 'validateIcons' -Command 'npm.cmd' -Arguments @('run', 'validate:icons')
     Invoke-BuildPhase -Name 'runtimeDependencyStage' -Command 'npm.cmd' -Arguments @('run', 'stage:runtime')
     Invoke-BuildPhase -Name 'runtimeVerify' -Command 'npm.cmd' -Arguments @('run', 'verify:runtime')

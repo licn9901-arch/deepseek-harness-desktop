@@ -1,12 +1,13 @@
 {
   "name": "dsh-desktop-tauri",
-  "version": "0.1.0-preview.14",
+  "version": "0.1.0-preview.15",
   "private": true,
   "description": "Tauri desktop shell for DeepSeek Harness (dsh web)",
   "scripts": {
     "tauri": "tauri",
     "generate:icons": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/generate-icons.ps1",
     "validate:icons": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/validate-icons.ps1",
+    "build:plugin-manager": "node scripts/build-plugin-manager.mjs",
     "lint": "cargo fmt --manifest-path src-tauri/Cargo.toml --check && cargo clippy --manifest-path src-tauri/Cargo.toml --all-targets -- -D warnings",
     "test": "cargo test --manifest-path src-tauri/Cargo.toml --locked && node --test desktop-plugins/runtime-services/test/runtime-services.test.mjs desktop-plugins/settings/test/plugin-controls.test.mjs scripts/test-prune-plugin-client-dependencies.mjs && pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/test-release-installer-isolation.ps1 && pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/test-release-source.ps1 && pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/test-release-gate-helpers.ps1",
     "coverage": "cargo llvm-cov --manifest-path src-tauri/Cargo.toml --locked --ignore-filename-regex \"(desktop|lib|main)\\.rs$\" --fail-under-lines 80",
@@ -27,12 +28,13 @@
     "release:artifacts": "pwsh -NoProfile -File scripts/write-release-artifacts.ps1",
     "package:payload": "pwsh -NoProfile -File scripts/stage-payload.ps1",
     "verify:payload": "cargo run --quiet --manifest-path src-tauri/Cargo.toml --example payload-tool -- verify --resources src-tauri/resources/payload",
-    "dev": "npm run validate:icons && tauri dev --config src-tauri/tauri.legacy.conf.json",
-    "build:legacy": "npm run validate:icons && npm run stage:runtime && npm run verify:runtime && npm run stage:plugins && npm run verify:plugins && tauri build --config src-tauri/tauri.legacy.conf.json",
+    "dev": "npm run build:plugin-manager && npm run validate:icons && tauri dev --config src-tauri/tauri.legacy.conf.json",
+    "build:legacy": "npm run build:plugin-manager && npm run validate:icons && npm run stage:runtime && npm run verify:runtime && npm run stage:plugins && npm run verify:plugins && tauri build --config src-tauri/tauri.legacy.conf.json",
     "build:payload": "pwsh -NoProfile -File scripts/build-payload.ps1",
     "build": "npm run build:payload"
   },
   "devDependencies": {
+    "@tauri-apps/api": "^2.11.1",
     "@tauri-apps/cli": "^2",
     "esbuild": "0.28.2"
   }

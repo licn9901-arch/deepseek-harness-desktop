@@ -14,6 +14,7 @@ use crate::navigation::is_external_browser_url;
 
 const MENU_OPEN: &str = "open-main";
 const MENU_RESTART: &str = "restart-host";
+const MENU_PLUGIN_MANAGER: &str = "plugin-manager";
 const MENU_LOG: &str = "open-log";
 const MENU_WEBSITE: &str = "open-project-website";
 const MENU_FEEDBACK: &str = "open-feedback";
@@ -63,6 +64,13 @@ pub fn configure_close_to_tray(window: &WebviewWindow) {
 pub fn create_tray(app: &App) -> tauri::Result<()> {
     let open = MenuItem::with_id(app, MENU_OPEN, "打开主窗口", true, None::<&str>)?;
     let restart = MenuItem::with_id(app, MENU_RESTART, "重启 DSH 服务", true, None::<&str>)?;
+    let plugin_manager = MenuItem::with_id(
+        app,
+        MENU_PLUGIN_MANAGER,
+        "插件管理 / 安全恢复",
+        true,
+        None::<&str>,
+    )?;
     let log = MenuItem::with_id(app, MENU_LOG, "打开日志", true, None::<&str>)?;
     let website = MenuItem::with_id(app, MENU_WEBSITE, "项目官网", true, None::<&str>)?;
     let feedback = MenuItem::with_id(app, MENU_FEEDBACK, "反馈问题", true, None::<&str>)?;
@@ -74,6 +82,7 @@ pub fn create_tray(app: &App) -> tauri::Result<()> {
         &[
             &open,
             &restart,
+            &plugin_manager,
             &log,
             &website,
             &feedback,
@@ -90,6 +99,11 @@ pub fn create_tray(app: &App) -> tauri::Result<()> {
         .on_menu_event(|app, event| match event.id().as_ref() {
             MENU_OPEN => show_main_window(app),
             MENU_RESTART => request_host_restart(app),
+            MENU_PLUGIN_MANAGER => {
+                if let Err(error) = crate::plugin_recovery::open_plugin_manager(app) {
+                    log_error(&error);
+                }
+            }
             MENU_LOG => open_log_file(),
             MENU_WEBSITE | MENU_FEEDBACK | MENU_CHECK_UPDATE => {
                 open_tray_external_target(event.id().as_ref())

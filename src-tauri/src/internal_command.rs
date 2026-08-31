@@ -3,9 +3,16 @@
 use std::ffi::OsString;
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use crate::payload::{garbage_collect_runtimes, provision_payload};
 use crate::runtime::default_runtime_root;
+
+/// 已通过严格参数校验的桌面重启 helper 命令。
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct RelaunchCommand {
+    old_pid: u32,
+}
 
 /// 已通过参数边界校验的 provision 命令。
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -23,6 +30,25 @@ struct CleanupTestRuntimeCommand {
 /// 在 Tauri 和 single-instance 初始化前识别并执行内部命令。
 pub fn run_if_requested() -> Option<i32> {
     let arguments = std::env::args_os().collect::<Vec<_>>();
+    if arguments
+        .iter()
+        .any(|argument| argument == "--relaunch-after-pid")
+    {
+        let command = match parse_relaunch_arguments(arguments) {
+            Ok(command) => command,
+            Err(error) => {
+                eprintln!("invalid relaunch command: {error}");
+                return Some(2);
+            }
+        };
+        return match wait_and_relaunch(command.old_pid) {
+            Ok(()) => Some(0),
+            Err(error) => {
+                eprintln!("desktop relaunch failed: {error}");
+                Some(1)
+            }
+        };
+    }
     if arguments
         .iter()
         .any(|argument| argument == "--cleanup-provision-test-runtime")
@@ -84,6 +110,57 @@ pub fn run_if_requested() -> Option<i32> {
             Some(1)
         }
     }
+}
+
+/// 只接受 `--relaunch-after-pid <正整数>`，拒绝混入任何路径或额外参数。
+fn parse_relaunch_arguments(
+    arguments: impl IntoIterator<Item = OsString>,
+) -> Result<RelaunchCommand, String> {
+    let arguments = arguments.into_iter().skip(1).collect::<Vec<_>>();
+    if arguments.len() != 2 || arguments[0] != "--relaunch-after-pid" {
+        return Err("expected exactly --relaunch-after-pid <pid>".to_owned());
+    }
+    let old_pid = arguments[1]
+        .to_string_lossy()
+        .parse::<u32>()
+        .map_err(|_| "PID must be a positive 32-bit integer".to_owned())?;
+    if old_pid == 0 || old_pid == std::process::id() {
+        return Err("PID must identify a different process".to_owned());
+    }
+    Ok(RelaunchCommand { old_pid })
+}
+
+/// 等待旧桌面 PID 退出，再以相同可执行文件启动一个不带用户参数的新实例。
+#[cfg(windows)]
+fn wait_and_relaunch(old_pid: u32) -> Result<(), String> {
+    use std::os::windows::process::CommandExt;
+    use windows_sys::Win32::Foundation::{CloseHandle, WAIT_FAILED};
+    use windows_sys::Win32::Storage::FileSystem::SYNCHRONIZE;
+    use windows_sys::Win32::System::Threading::{OpenProcess, WaitForSingleObject, INFINITE};
+
+    let process = unsafe { OpenProcess(SYNCHRONIZE, 0, old_pid) };
+    if !process.is_null() {
+        let wait_result = unsafe { WaitForSingleObject(process, INFINITE) };
+        unsafe { CloseHandle(process) };
+        if wait_result == WAIT_FAILED {
+            return Err(format!(
+                "could not wait for old desktop PID {old_pid}: {}",
+                std::io::Error::last_os_error()
+            ));
+        }
+    }
+    let executable = std::env::current_exe()
+        .map_err(|error| format!("could not resolve desktop executable: {error}"))?;
+    Command::new(executable)
+        .creation_flags(0x0800_0000)
+        .spawn()
+        .map(|_| ())
+        .map_err(|error| format!("could not start new desktop process: {error}"))
+}
+
+#[cfg(not(windows))]
+fn wait_and_relaunch(_old_pid: u32) -> Result<(), String> {
+    Err("desktop relaunch helper is only supported on Windows".to_owned())
 }
 
 /// 解析测试 runtime 清理参数；清理操作必须显式声明 test mode 和唯一目标。
@@ -225,7 +302,35 @@ mod tests {
     use std::fs;
     use std::path::{Path, PathBuf};
 
-    use super::{cleanup_test_runtime_root, parse_cleanup_arguments, parse_provision_arguments};
+    use super::{
+        cleanup_test_runtime_root, parse_cleanup_arguments, parse_provision_arguments,
+        parse_relaunch_arguments,
+    };
+
+    #[test]
+    fn relaunch_requires_exact_pid_only_arguments() {
+        let parsed = parse_relaunch_arguments([
+            OsString::from("dsh-desktop.exe"),
+            OsString::from("--relaunch-after-pid"),
+            OsString::from("4242"),
+        ])
+        .unwrap();
+        assert_eq!(parsed.old_pid, 4242);
+
+        assert!(parse_relaunch_arguments([
+            OsString::from("dsh-desktop.exe"),
+            OsString::from("--relaunch-after-pid"),
+            OsString::from("4242"),
+            OsString::from("--payload-resources"),
+        ])
+        .is_err());
+        assert!(parse_relaunch_arguments([
+            OsString::from("dsh-desktop.exe"),
+            OsString::from("--relaunch-after-pid"),
+            OsString::from("0"),
+        ])
+        .is_err());
+    }
 
     #[test]
     fn normal_launch_is_not_intercepted() {

@@ -1,6 +1,6 @@
 {
   "name": "dsh-desktop-managed-plugins",
-  "version": "0.1.0-preview.14",
+  "version": "0.1.0-preview.15",
   "private": true,
   "description": "Locked production dependencies for DSH Desktop managed plugins",
   "dependencies": {
