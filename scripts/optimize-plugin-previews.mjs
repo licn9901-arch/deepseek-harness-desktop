@@ -17,7 +17,7 @@ function readDirectoryArgument(name) {
   return resolve(value);
 }
 
-/** 递归收集内置皮肤画廊的 PNG 预览图。 */
+/** 递归收集内置皮肤画廊支持的 PNG 或 JPEG 预览图。 */
 async function collectPreviewFiles(root) {
   const files = [];
   for (const skin of await readdir(root, { withFileTypes: true })) {
@@ -31,7 +31,7 @@ async function collectPreviewFiles(root) {
       throw error;
     }
     for (const entry of entries) {
-      if (entry.isFile() && entry.name.toLowerCase().endsWith(".png")) {
+      if (entry.isFile() && /\.(png|jpe?g)$/i.test(entry.name)) {
         files.push(join(previewRoot, entry.name));
       }
     }
@@ -43,10 +43,10 @@ async function collectPreviewFiles(root) {
 async function optimizePreview(sharp, file) {
   const before = (await stat(file)).size;
   const input = await readFile(file);
-  const output = await sharp(input)
-    .resize({ width: MAX_WIDTH, withoutEnlargement: true })
-    .png({ compressionLevel: 9, adaptiveFiltering: true, palette: true, quality: 80 })
-    .toBuffer();
+  const image = sharp(input).resize({ width: MAX_WIDTH, withoutEnlargement: true });
+  const output = /\.png$/i.test(file)
+    ? await image.png({ compressionLevel: 9, adaptiveFiltering: true, palette: true, quality: 80 }).toBuffer()
+    : await image.jpeg({ quality: 80, progressive: true, mozjpeg: true }).toBuffer();
   if (output.length > MAX_FILE_BYTES) {
     throw new Error(`Optimized preview exceeds ${MAX_FILE_BYTES} bytes: ${file}`);
   }

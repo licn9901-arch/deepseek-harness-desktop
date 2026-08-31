@@ -272,6 +272,12 @@ try {
         --node-modules (Join-Path $pluginSource 'node_modules') `
         --owner 'dsh-better-sidebar' --dependency 'mermaid'
     if ($LASTEXITCODE -ne 0) { throw 'Plugin client dependency pruning failed.' }
+    # Sidebar 的浏览器 bundle 已内联图标实现，删除未被任何其他托管插件引用的完整 react-icons 包。
+    & (Join-Path $nodeSource 'node.exe') (Join-Path $PSScriptRoot 'prune-plugin-client-dependencies.mjs') `
+        --lock (Join-Path $repoRoot 'plugin-runtime\package-lock.json') `
+        --node-modules (Join-Path $pluginSource 'node_modules') `
+        --owner 'dsh-better-sidebar' --dependency 'react-icons'
+    if ($LASTEXITCODE -ne 0) { throw 'Plugin client dependency pruning failed.' }
     Remove-NodeIgnoredModuleFormats -NodeModules (Join-Path $hostSource 'node_modules')
     & (Join-Path $nodeSource 'node.exe') (Join-Path $PSScriptRoot 'optimize-plugin-previews.mjs') `
         --host-node-modules (Join-Path $hostSource 'node_modules') --plugin-root $pluginSource
