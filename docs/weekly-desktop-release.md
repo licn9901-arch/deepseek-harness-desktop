@@ -52,8 +52,13 @@ Skill 的版本同步方式。本文是版本选型与发布记录的事实来�
 ### 本次结果
 
 - [x] 版本声明统一更新为 `0.1.0-preview.14`。
-- [ ] 生成并校验本地 Windows x64 NSIS 安装包。
+- [x] 生成并校验本地 Windows x64 NSIS 安装包。
 - [ ] 发布门禁、GitHub Release、tag 与资产上传：本次明确不执行。
+
+本地打包结果：构建源码提交为 `d22aa8084ac2390c069b6f009eeaa1474030c4ba`，安装器为
+`src-tauri/target/release/bundle/nsis/DeepSeek Harness Desktop_0.1.0-preview.14_x64-setup.exe`（91,708,602
+字节，SHA-256：`a504e4f820d8bd7839d291846afc5a70355cd0eaf650f4e045180c49586c2d8b`）；payload digest 为
+`3b927b5249f946cdf435d2e75a476fd88a54c3a932bd0b93647f1ea9354dc334`。该安装器仅保留在本地，未发布。
 
 ## 2026-W34 版本计划
 
